@@ -17,4 +17,16 @@ static class EulerMethod{
 		exec_time = stopwatch.Elapsed;
 		stopwatch.Reset();
 	}
+	public static void Euler(Func<double,double> y_prime, Func<double,double> z_prime, double y, double z, List<(double, double)> vals, out TimeSpan exec_time){
+		stopwatch.Reset();
+		stopwatch.Start();
+		for(double i = 0; i<=Consts.T_max; i+=Consts.IntegrationSteps.Euler){
+			vals.Add((y,z));
+			y += Consts.IntegrationSteps.Euler * y_prime(z);
+			z += Consts.IntegrationSteps.Euler * z_prime(y);
+		}
+		stopwatch.Stop();
+		exec_time = stopwatch.Elapsed;
+		stopwatch.Reset();
+	}
 }
