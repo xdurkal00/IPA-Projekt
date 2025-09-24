@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using ScottPlot;
 using System.Diagnostics;
+using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Double;
 
 namespace ODESolver;
 
@@ -11,17 +13,23 @@ class Solver{
 	static List<(double y, double z)> result2 = new();
 	static TimeSpan exec_time = new();
 	static ScottPlot.Plot plot2 = new();
+	static List<Matrix<double>> result_m = new();
 	
 	public static void Main(){
 		ScottPlot.Plot plot = new();
 
 		Console.WriteLine($"Does function converge? {Functs.Convergence()}");
 
-		EulerMethod.Euler(Functs.Y_prime, Functs.Z_prime, Consts.InitialConditions.Y, Consts.InitialConditions.Z, result2, out exec_time);
+		//EulerMethod.Euler(Functs.Y_prime, Functs.Z_prime, Consts.InitialConditions.Y, Consts.InitialConditions.Z, result2, out exec_time);
+		double[,] m = {{0,Consts.Omega},{-Consts.Omega,0}};
+		double[,] initial = {{Consts.InitialConditions.Y},{Consts.InitialConditions.Z}};
+		EulerMethod.EulerMatrix(DenseMatrix.OfArray(m), DenseMatrix.OfArray(initial), result_m, out exec_time);
+		
+		result_m.ForEach(i => Console.WriteLine(i[1,0]));
 
-		plot2.Add.Scatter(Enumerable.Range(0, result2.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result2.Select(i => i.y).ToArray()).LegendText = $"Euler method (y')";
+		plot2.Add.Scatter(Enumerable.Range(0, result_m.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result_m.Select(i => i[0,0]).ToArray()).LegendText = $"Euler method (y')";
 
-		plot2.Add.Scatter(Enumerable.Range(0, result2.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result2.Select(i => i.z).ToArray()).LegendText = $"Euler method (z')";
+		plot2.Add.Scatter(Enumerable.Range(0, result_m.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result_m.Select(i => i[1,0]).ToArray()).LegendText = $"Euler method (z')";
 
 		TaylorSeries.Taylor(Functs.Y_prime, Consts.InitialConditions.Y, result, out exec_time);
 
@@ -72,10 +80,10 @@ class Solver{
 		f_z.LegendText = "Analytical solution for z'";
 
 		plot2.Axes.SetLimits(0, Consts.T_max, -2, 2);
-		plot2.SavePng("graph2.png", 600, 450);
+		plot2.SavePng("output/graph2.png", 600, 450);
 		
 		plot.Axes.SetLimits(0, Consts.T_max, 0, 2);
-		plot.SavePng("graph.png", 600, 450);
+		plot.SavePng("output/graph.png", 600, 450);
 
 
 	}

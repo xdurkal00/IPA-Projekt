@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace ODESolver;
 
@@ -20,10 +21,23 @@ static class EulerMethod{
 	public static void Euler(Func<double,double> y_prime, Func<double,double> z_prime, double y, double z, List<(double, double)> vals, out TimeSpan exec_time){
 		stopwatch.Reset();
 		stopwatch.Start();
+		double new_y, new_z;
 		for(double i = 0; i<=Consts.T_max; i+=Consts.IntegrationSteps.Euler){
 			vals.Add((y,z));
-			y += Consts.IntegrationSteps.Euler * y_prime(z);
-			z += Consts.IntegrationSteps.Euler * z_prime(y);
+			new_y = y + Consts.IntegrationSteps.Euler * y_prime(z);
+			new_z = z + Consts.IntegrationSteps.Euler * z_prime(y);
+			(y, z) = (new_y, new_z);
+		}
+		stopwatch.Stop();
+		exec_time = stopwatch.Elapsed;
+		stopwatch.Reset();
+	}
+	public static void EulerMatrix(Matrix<double> m, Matrix<double> initial, List<Matrix<double>> vals, out TimeSpan exec_time){
+		stopwatch.Reset();
+		stopwatch.Start();
+		for(double i = 0; i<=Consts.T_max; i+=Consts.IntegrationSteps.Euler){
+			vals.Add(initial);
+			initial += Consts.IntegrationSteps.Euler*m*initial;
 		}
 		stopwatch.Stop();
 		exec_time = stopwatch.Elapsed;
