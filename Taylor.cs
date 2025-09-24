@@ -7,17 +7,18 @@ namespace ODESolver;
 static class TaylorSeries{
 	private static Stopwatch stopwatch = new();
 
-	private static double RecTaylor(double y, double h, double lambda, uint step, uint max_steps){
-		if(step < max_steps)
-			return y+RecTaylor((h/(++step))*lambda*y, h, lambda, step, max_steps);
-		return (h/(++step))*lambda*y;
+	private static double RecTaylor(double y, uint step, double last_term){
+		double new_term = ((Consts.IntegrationSteps.Taylor/++step)*Consts.Lambda*y);
+		if(step < Consts.TaylorSeries.MaxSteps && Math.Abs(last_term)+Math.Abs(y)+Math.Abs(new_term) > Consts.TaylorSeries.EPS)
+			return y+RecTaylor(new_term, step, y);
+		return new_term;
 	}
 
-	public static void Taylor(Func<double,double> f, double y, double n, double h, double lambda, uint steps, List<double> vals, out TimeSpan exec_time){
+	public static void Taylor(Func<double,double> f, double y, List<double> vals, out TimeSpan exec_time){
 		stopwatch.Start();
-		for(double i = 0; i<=n; i+=h){
+		for(double i = 0; i<=Consts.T_max; i+=Consts.IntegrationSteps.Taylor){
 			vals.Add(y);
-			y += RecTaylor(h*f(y), h, lambda, 1, steps);
+			y += RecTaylor(Consts.IntegrationSteps.Taylor*f(y), 1, y);
 		}
 		stopwatch.Stop();
 		exec_time = stopwatch.Elapsed;

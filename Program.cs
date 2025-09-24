@@ -7,64 +7,53 @@ using System.Diagnostics;
 namespace ODESolver;
 
 class Solver{
-	const double y_0 = 2d;
-	const double k = -1d;
-	const double h_e = 1d;
-	const double h_rk = 1d;
-	const double h_ts = 1d;
-	const uint ts_steps = 5;
-	const double n = 10;
-
-	
 	static List<double> result = new();
 	static TimeSpan exec_time = new();
 	
-	public static double function(double y) => k*y;
-	
-	static double analytical(double t) => y_0 * Math.Pow(Math.E, k*t);
-
 	public static void Main(){
 		ScottPlot.Plot plot = new();
 
-		TaylorSeries.Taylor(function, y_0, n, h_ts, k, ts_steps, result, out exec_time);
+		Console.WriteLine($"Does function converge? {Functs.Convergence()}");
+
+		TaylorSeries.Taylor(Functs.Y_prime, Consts.InitialConditions.Y, result, out exec_time);
 
 		Console.WriteLine($"Taylor method execution time: {exec_time.TotalMilliseconds} ms");
 
-		plot.Add.Scatter(Enumerable.Range(0,result.Count+1).Select(i => i*h_e).ToArray(), result.ToArray()).LegendText = $"{ts_steps} term Taylor series";
+		plot.Add.Scatter(Enumerable.Range(0,result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.ToArray()).LegendText = $"Taylor series (EPS={Consts.TaylorSeries.EPS})";
 
 		result.Clear();
 
-		EulerMethod.Euler(function, y_0, n, h_e, result, out exec_time);
+		EulerMethod.Euler(Functs.Y_prime, Consts.InitialConditions.Y, result, out exec_time);
 
 		Console.WriteLine($"Euler method execution time: {exec_time.TotalMilliseconds} ms");
 
-		plot.Add.Scatter(Enumerable.Range(0,result.Count+1).Select(i => i*h_e).ToArray(), result.ToArray()).LegendText = "Euler method";
-		Console.WriteLine($"Does Euler method converge: {EulerMethod.Convergence(h_e, k)}");				
+		plot.Add.Scatter(Enumerable.Range(0,result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.ToArray()).LegendText = "Euler method";
+		
 		result.Clear();
 
-		RK.SecondOrd(function, y_0, n, h_rk, result, out exec_time);
+		RK.SecondOrd(Functs.Y_prime, Consts.InitialConditions.Y, result, out exec_time);
 		
 		Console.WriteLine($"2nd order Runge-Kutta method execution time: {exec_time.TotalMilliseconds} ms");
 
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*h_rk).ToArray(), result.ToArray()).LegendText = "2nd Order Runge-Kutta";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.ToArray()).LegendText = "2nd Order Runge-Kutta";
 
 		result.Clear();
 
-		RK.FourthOrd(function, y_0, n, h_rk, result, out exec_time);
+		RK.FourthOrd(Functs.Y_prime, Consts.InitialConditions.Y, result, out exec_time);
 
 		Console.WriteLine($"4th order Runge-Kutta method execution time: {exec_time.TotalMilliseconds} ms");
 	
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*h_rk).ToArray(), result.ToArray()).LegendText = "4nd Order Runge-Kutta";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.ToArray()).LegendText = "4nd Order Runge-Kutta";
 	
 		
 
 
-		var f = plot.Add.Function(analytical);
+		var f = plot.Add.Function(Functs.Analytical);
 		f.MinX = 0;
-		f.MaxX = n;
+		f.MaxX = Consts.T_max;
 		f.LegendText = "Analytical solution";
 		
-		plot.Axes.SetLimits(0, n, Math.Min(y_0, result.Min()), Math.Max(y_0, result.Max()));
+		plot.Axes.SetLimits(0, Consts.T_max, 0, 2);
 		plot.SavePng("graph.png", 600, 450);
 
 
