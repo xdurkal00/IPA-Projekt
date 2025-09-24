@@ -39,10 +39,10 @@ class Solver{
 		Console.WriteLine($"Euler method execution time: {exec_time.TotalMilliseconds} ms");
 
 		plot.Add.Scatter(Enumerable.Range(0,result.Count+1).Select(i => i*h_e).ToArray(), result.ToArray()).LegendText = "Euler method";
-				
+		Console.WriteLine($"Does Euler method converge: {EulerMethod.Convergence(h_e, k)}");				
 		result.Clear();
 
-		RK.ndOrd(function, y_0, n, h_rk, result, out exec_time);
+		RK.SecondOrd(function, y_0, n, h_rk, result, out exec_time);
 		
 		Console.WriteLine($"2nd order Runge-Kutta method execution time: {exec_time.TotalMilliseconds} ms");
 
@@ -50,7 +50,7 @@ class Solver{
 
 		result.Clear();
 
-		RK.thOrd(function, y_0, n, h_rk, result, out exec_time);
+		RK.FourthOrd(function, y_0, n, h_rk, result, out exec_time);
 
 		Console.WriteLine($"4th order Runge-Kutta method execution time: {exec_time.TotalMilliseconds} ms");
 	

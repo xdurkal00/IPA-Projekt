@@ -13,7 +13,7 @@ static class RK{
 		return (k_1, k_2);
 	}
 
-	public static void ndOrd(Func<double,double> f, double y, double n, double h, List<double> vals, out TimeSpan exec_time){
+	public static void SecondOrd(Func<double,double> f, double y, double n, double h, List<double> vals, out TimeSpan exec_time){
 		stopwatch.Start();
 		for(double i = 0; i<=n; i+=h){
 			vals.Add(y);
@@ -25,7 +25,7 @@ static class RK{
 		stopwatch.Reset();
 	}
 
-	public static void thOrd(Func<double,double> f, double y, double n, double h, List<double> vals, out TimeSpan exec_time){
+	public static void FourthOrd(Func<double,double> f, double y, double n, double h, List<double> vals, out TimeSpan exec_time){
 		stopwatch.Start();
 		for(double i = 0; i<=n; i+=h){
 			vals.Add(y);

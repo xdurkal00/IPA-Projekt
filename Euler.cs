@@ -6,6 +6,7 @@ namespace ODESolver;
 // class for Euler method solving
 static class EulerMethod{
 	private static Stopwatch stopwatch = new();
+	public static bool Convergence(double h, double lambda) => Math.Abs(1 + h*lambda) <= 1;
 	// function for calculating linear ODE f with a value of y at time 0 until time n with a time step of h
 	public static void Euler(Func<double,double> f, double y, double n, double h, List<double> vals, out TimeSpan exec_time){
 		stopwatch.Start();
