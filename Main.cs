@@ -74,6 +74,15 @@ class Solver{
 		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i.z).ToArray()).LegendText = "2nd order Runge-Kutta (z')";
 
 		result.Clear();
+	
+		RK.FourthOrd(Functs.Y_prime, Functs.Z_prime, Consts.InitialConditions.Y, Consts.InitialConditions.Z, result, out exec_time);
+
+		Console.WriteLine($"2nd order Runge-Kutta method execution time: {exec_time.TotalMilliseconds} ms");
+
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i.y).ToArray()).LegendText = "4th order Runge-Kutta (y')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i.z).ToArray()).LegendText = "4th order Runge-Kutta (z')";
+
+		result.Clear();	
 
 		var f = plot.Add.Function(Functs.Analytical.Y);
 		f.MinX = 0;
@@ -116,6 +125,16 @@ class Solver{
 		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "2nd order Runge-Kutta (z')";
 
 		result.Clear();
+
+		RK.FourthOrd(DenseMatrix.OfArray(m), DenseMatrix.OfArray(initial), result, out exec_time);
+
+		Console.WriteLine($"4th order Runge-Kutta execution time: {exec_time.TotalMilliseconds} ms");
+
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = "4th order Runge-Kutta (y')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "4th order Runge-Kutta (z')";
+
+		result.Clear();
+
 
 		var f = plot.Add.Function(Functs.Analytical.Y);
 		f.MinX = 0;
