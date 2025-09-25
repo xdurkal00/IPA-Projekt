@@ -1,7 +1,3 @@
-using System;
-using System.Diagnostics;
-using MathNet.Numerics.LinearAlgebra;
-
 namespace ODESolver;
 
 // class for Euler method solving
@@ -32,7 +28,7 @@ static class EulerMethod{
 		exec_time = stopwatch.Elapsed;
 		stopwatch.Reset();
 	}
-	public static void EulerMatrix(Matrix<double> m, Matrix<double> initial, List<Matrix<double>> vals, out TimeSpan exec_time){
+	public static void Euler(Matrix<double> m, Matrix<double> initial, List<Matrix<double>> vals, out TimeSpan exec_time){
 		stopwatch.Reset();
 		stopwatch.Start();
 		for(double i = 0; i<=Consts.T_max; i+=Consts.IntegrationSteps.Euler){
