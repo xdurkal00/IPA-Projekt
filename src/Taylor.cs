@@ -32,25 +32,25 @@ static class TaylorSeries{
 		return new_terms;
 	}
 
-	public static void Taylor(Func<double,double> f, double y, List<double> vals, out TimeSpan exec_time){
+	public static void Taylor(Func<double,double,double> f, double y, List<double> vals, out TimeSpan exec_time){
 		stopwatch.Reset();
 		stopwatch.Start();
 		for(double i = 0; i<=Consts.T_max; i+=Consts.IntegrationSteps.Taylor){
 			vals.Add(y);
-			y += RecTaylor(Consts.IntegrationSteps.Taylor*f(y), 1, y);
+			y += RecTaylor(Consts.IntegrationSteps.Taylor*f(i, y), 1, y);
 		}
 		stopwatch.Stop();
 		exec_time = stopwatch.Elapsed;
 		stopwatch.Reset();
 	}
 
-	public static void Taylor(Func<double,double> y_prime, Func<double,double> z_prime, double y, double z, List<(double,double)> vals, out TimeSpan exec_time){
+	public static void Taylor(Func<double,double,double,double> y_prime, Func<double,double,double,double> z_prime, double y, double z, List<(double,double)> vals, out TimeSpan exec_time){
 		stopwatch.Reset();
 		stopwatch.Start();
 		double exp_y, exp_z;
 		for(double i = 0; i<=Consts.T_max; i+=Consts.IntegrationSteps.Taylor){
 			vals.Add((y,z));
-			(exp_y, exp_z) = RecTaylor(Consts.IntegrationSteps.Taylor*y_prime(z), Consts.IntegrationSteps.Taylor*z_prime(y), 1, y, z);
+			(exp_y, exp_z) = RecTaylor(Consts.IntegrationSteps.Taylor*y_prime(i, y, z), Consts.IntegrationSteps.Taylor*z_prime(i, y, z), 1, y, z);
 			y += exp_y;
 			z += exp_z;
 		}
