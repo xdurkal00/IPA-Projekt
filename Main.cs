@@ -114,60 +114,67 @@ class Solver{
 	static void MatrixTest(){
 		ScottPlot.Plot plot = new();
 		List<Matrix<double>> result = new();
-		double[,] m = {{0,Consts.Omega},{-Consts.Omega,0}};
-		double[,] initial = {{Consts.InitialConditions.Y},{Consts.InitialConditions.Z}};
+		Matrix<double> initial = DenseMatrix.OfArray(new double[,]{{Consts.InitialConditions.V_x},{Consts.InitialConditions.V_y},{Consts.InitialConditions.V_z}});
 
-		Console.WriteLine("2 equation system matrix test\n");
+		Console.WriteLine("3 equation system matrix test\n");
 
-		EulerMethod.Euler(DenseMatrix.OfArray(m), DenseMatrix.OfArray(initial), result, out exec_time);
+		EulerMethod.Euler(Functs.A, initial, result, out exec_time);
 
 		Console.WriteLine($"Euler method execution time: {exec_time.TotalMilliseconds} s");
 
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = "Euler method (y')";
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "Euler method (z')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = "Euler method (Vx')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "Euler method (Vy')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Euler).ToArray(), result.Select(i => i[2,0]).ToArray()).LegendText = "Euler method (Vz')";
 
 		result.Clear();
 
-		RK.SecondOrd(DenseMatrix.OfArray(m), DenseMatrix.OfArray(initial), result, out exec_time);
+		RK.SecondOrd(Functs.A, initial, result, out exec_time);
 
 		Console.WriteLine($"2nd order Runge-Kutta execution time: {exec_time.TotalMilliseconds} s");
 
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = "2nd order Runge-Kutta (y')";
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "2nd order Runge-Kutta (z')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = "2nd order Runge-Kutta (Vx')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "2nd order Runge-Kutta (Vy')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[2,0]).ToArray()).LegendText = "2nd order Runge-Kutta (Vz')";
 
 		result.Clear();
 
-		RK.FourthOrd(DenseMatrix.OfArray(m), DenseMatrix.OfArray(initial), result, out exec_time);
+		RK.FourthOrd(Functs.A, initial, result, out exec_time);
 
 		Console.WriteLine($"4th order Runge-Kutta execution time: {exec_time.TotalMilliseconds} s");
 
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = "4th order Runge-Kutta (y')";
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "4th order Runge-Kutta (z')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = "4th order Runge-Kutta (Vx')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = "4th order Runge-Kutta (Vy')";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.RK).ToArray(), result.Select(i => i[2,0]).ToArray()).LegendText = "4th order Runge-Kutta (Vz')";
 
 		result.Clear();
 		
-		TaylorSeries.Taylor(DenseMatrix.OfArray(m), DenseMatrix.OfArray(initial), result, out exec_time);
+		TaylorSeries.Taylor(Functs.A, initial, result, out exec_time);
 
 		Console.WriteLine($"Taylor series execution time: {exec_time.TotalMilliseconds} s");
 
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Taylor).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = $"Taylor series (y') (EPS={Consts.TaylorSeries.EPS})";
-		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Taylor).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = $"Taylor series (z') (EPS={Consts.TaylorSeries.EPS})";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Taylor).ToArray(), result.Select(i => i[0,0]).ToArray()).LegendText = $"Taylor series (Vx') (EPS={Consts.TaylorSeries.EPS})";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Taylor).ToArray(), result.Select(i => i[1,0]).ToArray()).LegendText = $"Taylor series (Vy') (EPS={Consts.TaylorSeries.EPS})";
+		plot.Add.Scatter(Enumerable.Range(0, result.Count+1).Select(i => i*Consts.IntegrationSteps.Taylor).ToArray(), result.Select(i => i[2,0]).ToArray()).LegendText = $"Taylor series (Vz') (EPS={Consts.TaylorSeries.EPS})";
 
 		result.Clear();
 
-
-		var f = plot.Add.Function(Functs.Analytical.Y);
+		var f = plot.Add.Function(Functs.Analytical.V_x);
 		f.MinX = 0;
 		f.MaxX = Consts.T_max;
-		f.LegendText = "Analytical solution (y')";
+		f.LegendText = "Analytical solution (Vx')";
 
-		f = plot.Add.Function(Functs.Analytical.Z);
+		f = plot.Add.Function(Functs.Analytical.V_y);
 		f.MinX = 0;
 		f.MaxX = Consts.T_max;
-		f.LegendText = "Analytical solution (z')";
+		f.LegendText = "Analytical solution (Vy')";
+
+		f = plot.Add.Function(Functs.Analytical.V_z);
+		f.MinX = 0;
+		f.MaxX = Consts.T_max;
+		f.LegendText = "Analytical solution (Vz')";
 
 		plot.Axes.SetLimits(0, Consts.T_max, -5, 5);
-		plot.SavePng("output/Matrix.png", 600, 450);
+		plot.SavePng("output/Matrix.png", 1920, 1080);
 
 		Console.WriteLine("Output graph: output/Matrix.png\n");
 	}
